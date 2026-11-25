@@ -1,0 +1,10 @@
+{
+  "description": "A simple chat interface for sending messages and getting conversational responses.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
