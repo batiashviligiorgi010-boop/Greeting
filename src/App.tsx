@@ -314,7 +314,8 @@ export default function App() {
     if (
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       !("IntersectionObserver" in window)
-    ) return;
+    )
+      return;
 
     const elements = appRef.current?.querySelectorAll<HTMLElement>(
       ".greeting, .hero-card, .continue-card, .section-header, .category-tabs, .book-card, .mood-section, .bottom-features",
@@ -820,28 +821,73 @@ export default function App() {
               <div className="section-header">
                 <div>
                   <span className="eyebrow">A SOUNDTRACK FOR YOUR STATE OF MIND</span>
-                  <h2 id="mood-heading">Find your frequency<span className="orange-period">.</span></h2>
+                  <h2 id="mood-heading">
+                    Find your frequency<span className="orange-period">.</span>
+                  </h2>
                 </div>
-                <span className="mood-hint">Follow your feeling <Icon name="arrow" size={16} /></span>
+                <span className="mood-hint">
+                  Follow your feeling <Icon name="arrow" size={16} />
+                </span>
               </div>
               <div className="mood-rail" aria-label="Browse by listening mood">
-                {([
-                  { title: "Somewhere else", subtitle: "GET LOST IN A GOOD STORY", category: "Fiction", icon: "discover", tone: "dream" },
-                  { title: "A softer pace", subtitle: "BREATHE IN. TUNE OUT.", category: "Mindfulness", icon: "sun", tone: "calm" },
-                  { title: "A fresh perspective", subtitle: "LITTLE IDEAS. BIG POSSIBILITIES.", category: "Personal growth", icon: "star", tone: "glow" },
-                  { title: "In your element", subtitle: "FIND YOUR FOCUS", category: "Business", icon: "headphones", tone: "focus" },
-                ] as { title: string; subtitle: string; category: string; icon: IconName; tone: string }[]).map(mood => (
+                {(
+                  [
+                    {
+                      title: "Somewhere else",
+                      subtitle: "GET LOST IN A GOOD STORY",
+                      category: "Fiction",
+                      icon: "discover",
+                      tone: "dream",
+                    },
+                    {
+                      title: "A softer pace",
+                      subtitle: "BREATHE IN. TUNE OUT.",
+                      category: "Mindfulness",
+                      icon: "sun",
+                      tone: "calm",
+                    },
+                    {
+                      title: "A fresh perspective",
+                      subtitle: "LITTLE IDEAS. BIG POSSIBILITIES.",
+                      category: "Personal growth",
+                      icon: "star",
+                      tone: "glow",
+                    },
+                    {
+                      title: "In your element",
+                      subtitle: "FIND YOUR FOCUS",
+                      category: "Business",
+                      icon: "headphones",
+                      tone: "focus",
+                    },
+                  ] as {
+                    title: string;
+                    subtitle: string;
+                    category: string;
+                    icon: IconName;
+                    tone: string;
+                  }[]
+                ).map((mood) => (
                   <button
                     key={mood.tone}
                     className={`mood-card mood-${mood.tone}`}
                     onClick={() => {
                       setCategory(mood.category);
-                      document.getElementById("book-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      document
+                        .getElementById("book-section")
+                        ?.scrollIntoView({ behavior: "smooth", block: "start" });
                     }}
                   >
-                    <span className="mood-orb" aria-hidden="true"><Icon name={mood.icon} size={31} /></span>
-                    <span className="mood-copy"><small>{mood.subtitle}</small><strong>{mood.title}</strong></span>
-                    <span className="mood-arrow"><Icon name="arrow" size={16} /></span>
+                    <span className="mood-orb" aria-hidden="true">
+                      <Icon name={mood.icon} size={31} />
+                    </span>
+                    <span className="mood-copy">
+                      <small>{mood.subtitle}</small>
+                      <strong>{mood.title}</strong>
+                    </span>
+                    <span className="mood-arrow">
+                      <Icon name="arrow" size={16} />
+                    </span>
                   </button>
                 ))}
               </div>
