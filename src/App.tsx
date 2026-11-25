@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./welcome.css";
 
 type IconName =
   | "discover"
@@ -274,7 +275,308 @@ function Cover({ book, small = false }: { book: Book; small?: boolean }) {
   );
 }
 
+function WelcomePage({ onExplore }: { onExplore: (book?: Book) => void }) {
+  const [signInOpen, setSignInOpen] = useState(false);
+  const signInButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const exploreButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!signInOpen) return;
+    closeButton.current?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSignInOpen(false);
+      if (event.key === "Tab") {
+        if (event.shiftKey && document.activeElement === closeButton.current) {
+          event.preventDefault();
+          exploreButton.current?.focus();
+        } else if (!event.shiftKey && document.activeElement === exploreButton.current) {
+          event.preventDefault();
+          closeButton.current?.focus();
+        }
+      }
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKey);
+      signInButton.current?.focus();
+    };
+  }, [signInOpen]);
+
+  return (
+    <div className="welcome-page">
+      <a className="welcome-skip" href="#welcome-main">
+        Skip to content
+      </a>
+      <header className="welcome-header">
+        <a className="brand" href="#welcome-main" aria-label="Audiio home">
+          <span className="brand-symbol">
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+          audiio<span className="brand-dot">.</span>
+        </a>
+        <nav className="welcome-nav" aria-label="Welcome navigation">
+          <a href="#welcome-books">The collection</a>
+          <a href="#welcome-how">The audiio feeling</a>
+          <a href="#welcome-start">Your next chapter</a>
+        </nav>
+        <div className="welcome-header-actions">
+          <button ref={signInButton} className="welcome-signin" onClick={() => setSignInOpen(true)}>
+            Sign in
+          </button>
+          <button className="primary-button" onClick={() => onExplore()}>
+            Start exploring <Icon name="arrow" size={16} />
+          </button>
+        </div>
+      </header>
+      <main id="welcome-main">
+        <section className="welcome-hero">
+          <div className="welcome-hero-copy">
+            <span className="welcome-pill">
+              <span /> A LITTLE LESS NOISE. A LITTLE MORE YOU.
+            </span>
+            <h1>
+              Life sounds <br />
+              better with
+              <br />
+              <em>a good story.</em>
+            </h1>
+            <p>
+              Escape into another world. Fall in love with a new idea.
+              <br className="welcome-desktop-break" /> Make a little room for something wonderful.
+            </p>
+            <div className="welcome-hero-actions">
+              <button className="primary-button" onClick={() => onExplore()}>
+                Find your next chapter <Icon name="arrow" size={18} />
+              </button>
+              <a className="welcome-preview-link" href="#welcome-books">
+                <span>
+                  <Icon name="play" size={13} fill />
+                </span>{" "}
+                A taste of what’s inside
+              </a>
+            </div>
+            <div className="welcome-hero-note">
+              <Icon name="check" size={14} />
+              <span>Explore freely. No account or payment needed.</span>
+            </div>
+            <div className="welcome-values">
+              <span>Curated with care</span>
+              <i />
+              <span>Listen at your pace</span>
+              <i />
+              <span>Made for your everyday</span>
+            </div>
+          </div>
+          <div className="welcome-visual">
+            <div className="welcome-visual-orbit" aria-hidden="true" />
+            <div className="welcome-photo">
+              <img
+                src="/images/listening-hero.png"
+                alt="A listener closing her eyes and enjoying a story in lavender headphones"
+              />
+            </div>
+            <div className="welcome-photo-caption">
+              <span className="sound-bars">
+                <i />
+                <i />
+                <i />
+                <i />
+                <i />
+              </span>{" "}
+              A whole world. Just press play.
+            </div>
+            <div className="welcome-floating-book">
+              <div className="welcome-mini-cover">
+                <Cover book={books[0]} small />
+              </div>
+              <div>
+                <small>YOUR NEXT LITTLE OBSESSION</small>
+                <strong>The Creative Act</strong>
+                <span>Rick Rubin</span>
+                <div className="welcome-mini-progress">
+                  <i />
+                </div>
+              </div>
+              <button
+                className="main-play-button"
+                onClick={() => onExplore(books[0])}
+                aria-label="Explore The Creative Act"
+              >
+                <Icon name="play" size={15} fill />
+              </button>
+            </div>
+            <span className="welcome-visual-star" aria-hidden="true">
+              ✳
+            </span>
+          </div>
+        </section>
+        <div className="welcome-manifesto">
+          <span>FOR THE CURIOUS. THE DREAMERS. THE “ONE MORE CHAPTER” PEOPLE.</span>
+          <p>
+            Not just something to listen to. <em>Something to feel.</em>
+          </p>
+        </div>
+        <section className="welcome-picks" id="welcome-books" aria-labelledby="welcome-books-title">
+          <div className="welcome-section-heading">
+            <div>
+              <span className="eyebrow">GOOD STORIES HAVE A WAY OF FINDING YOU</span>
+              <h2 id="welcome-books-title">
+                Meet your next <em>great listen.</em>
+              </h2>
+            </div>
+            <button className="text-button" onClick={() => onExplore()}>
+              Explore the collection <Icon name="arrow" size={17} />
+            </button>
+          </div>
+          <div className="welcome-book-rail">
+            {books.slice(0, 5).map((book) => (
+              <button
+                className="welcome-book"
+                key={book.id}
+                onClick={() => onExplore(book)}
+                aria-label={`Explore ${book.title} by ${book.author}`}
+              >
+                <div className="welcome-book-cover">
+                  <Cover book={book} />
+                  <span className="welcome-cover-play">
+                    <Icon name="play" size={18} fill />
+                  </span>
+                </div>
+                <span className="welcome-book-category">{book.category}</span>
+                <strong>{book.title}</strong>
+                <span className="welcome-book-author">{book.author}</span>
+                <span className="welcome-book-rating">
+                  <Icon name="star" size={11} fill />
+                  {book.rating}
+                  <i />
+                  {book.duration}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="welcome-how" id="welcome-how" aria-labelledby="welcome-how-title">
+          <div className="welcome-section-heading">
+            <div>
+              <span className="eyebrow">IT’S THE LITTLE MOMENTS</span>
+              <h2 id="welcome-how-title">
+                Make the everyday <em>extraordinary.</em>
+              </h2>
+            </div>
+            <p>
+              For your morning walk, your slow Sunday,
+              <br />
+              and all the little in-betweens.
+            </p>
+          </div>
+          <div className="welcome-benefits">
+            {(
+              [
+                {
+                  icon: "discover",
+                  title: "Follow your curiosity",
+                  text: "Big ideas, beautiful fiction, and fresh perspectives. There’s a story for every side of you.",
+                  tone: "violet",
+                },
+                {
+                  icon: "headphones",
+                  title: "Find your own rhythm",
+                  text: "Press play on a preview, find your favorite voice, and make listening a little ritual.",
+                  tone: "peach",
+                },
+                {
+                  icon: "heart",
+                  title: "Keep what moves you",
+                  text: "Collect the books you love and make a little space for the ones you can’t wait to discover.",
+                  tone: "sage",
+                },
+              ] as { icon: IconName; title: string; text: string; tone: string }[]
+            ).map((item) => (
+              <article className={`welcome-benefit benefit-${item.tone}`} key={item.title}>
+                <span className="welcome-benefit-icon">
+                  <Icon name={item.icon} size={25} />
+                </span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section className="welcome-invitation" id="welcome-start">
+          <span className="welcome-invitation-orbit" aria-hidden="true" />
+          <span className="eyebrow">YOUR NEXT CHAPTER IS WAITING</span>
+          <h2>
+            Somewhere wonderful
+            <br />
+            is just <em>a listen away.</em>
+          </h2>
+          <p>Come as you are. Find a story that stays with you.</p>
+          <button className="primary-button" onClick={() => onExplore()}>
+            Step into audiio <Icon name="arrow" size={18} />
+          </button>
+          <small>Free to explore. No sign-up needed for this preview.</small>
+        </section>
+      </main>
+      <footer className="welcome-footer">
+        <a href="#welcome-main" className="brand">
+          audiio<span className="brand-dot">.</span>
+        </a>
+        <span>Less noise. More stories.</span>
+        <span>© {new Date().getFullYear()} Audiio. A little world of audio.</span>
+        <a href="#welcome-main">
+          Back to the top <Icon name="arrow" size={14} />
+        </a>
+      </footer>
+      {signInOpen && (
+        <div className="modal-overlay" onClick={() => setSignInOpen(false)}>
+          <section
+            className="modal simple-modal welcome-signin-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="welcome-signin-title"
+            aria-describedby="welcome-signin-description"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              ref={closeButton}
+              className="modal-close icon-button"
+              aria-label="Close sign-in information"
+              onClick={() => setSignInOpen(false)}
+            >
+              <Icon name="close" />
+            </button>
+            <span className="modal-symbol">
+              <Icon name="headphones" size={30} />
+            </span>
+            <span className="eyebrow">YOUR LITTLE WORLD OF AUDIO</span>
+            <h2 id="welcome-signin-title">
+              Welcome to your
+              <br />
+              next chapter.
+            </h2>
+            <p id="welcome-signin-description">
+              Accounts aren’t available in this preview yet. For now, make yourself at home and
+              explore the listening experience as a guest.
+            </p>
+            <button ref={exploreButton} className="primary-button" onClick={() => onExplore()}>
+              Continue as a guest <Icon name="arrow" size={17} />
+            </button>
+            <small>No account, password, or payment needed.</small>
+          </section>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
+  const [screen, setScreen] = useState<"welcome" | "library">("welcome");
   const [page, setPage] = useState("Discover");
   const [category, setCategory] = useState("For you");
   const [query, setQuery] = useState("");
@@ -318,7 +620,7 @@ export default function App() {
       return;
 
     const elements = appRef.current?.querySelectorAll<HTMLElement>(
-      ".greeting, .hero-card, .continue-card, .section-header, .category-tabs, .book-card, .mood-section, .bottom-features",
+      ".greeting, .hero-card, .continue-card, .section-header, .category-tabs, .book-card, .mood-section, .bottom-features, .welcome-hero-copy, .welcome-visual, .welcome-picks, .welcome-how, .welcome-invitation",
     );
     const observer = new IntersectionObserver(
       (entries) => {
@@ -338,7 +640,7 @@ export default function App() {
       observer.observe(element);
     });
     return () => observer.disconnect();
-  }, [page, category, query, showAll, favorites, library]);
+  }, [screen, page, category, query, showAll, favorites, library]);
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -403,6 +705,29 @@ export default function App() {
       ? filtered
       : filtered.slice(0, 5);
 
+  function returnToWelcome() {
+    window.speechSynthesis?.cancel();
+    setPlaying(false);
+    setSelected(null);
+    setScreen("welcome");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  if (screen === "welcome") {
+    return (
+      <div ref={appRef}>
+        <WelcomePage
+          onExplore={(book) => {
+            setScreen("library");
+            navigate("Discover");
+            setSelected(book ?? null);
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div ref={appRef} className={`app-shell ${playing ? "is-playing" : ""}`}>
       <aside className="sidebar">
@@ -411,7 +736,7 @@ export default function App() {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            navigate("Discover");
+            returnToWelcome();
           }}
         >
           <span className="brand-symbol">
@@ -484,14 +809,11 @@ export default function App() {
           </button>
           <small>Good stories are worth it.</small>
         </div>
-        <button
-          className="profile"
-          onClick={() => setToast("You’re listening as Alex. Enjoy your little world of audio.")}
-        >
-          <span className="avatar">A</span>
+        <button className="profile" onClick={returnToWelcome}>
+          <span className="avatar">G</span>
           <span>
-            <strong>Alex Morgan</strong>
-            <small>Your personal space</small>
+            <strong>Guest listener</strong>
+            <small>Back to welcome</small>
           </span>
           <Icon name="chevron" size={16} />
         </button>
@@ -507,7 +829,7 @@ export default function App() {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              navigate("Discover");
+              returnToWelcome();
             }}
           >
             audiio<span className="brand-dot">.</span>
@@ -558,7 +880,9 @@ export default function App() {
                 </div>
               )}
             </div>
-            <span className="header-avatar avatar">A</span>
+            <span className="header-avatar avatar" aria-label="Browsing as a guest">
+              G
+            </span>
           </div>
         </header>
         {searchOpen && (
@@ -599,7 +923,7 @@ export default function App() {
               <h1>
                 {page === "Discover" ? (
                   <>
-                    Good afternoon, Alex <span className="greeting-star">✳</span>
+                    Welcome, curious mind <span className="greeting-star">✳</span>
                   </>
                 ) : (
                   page
